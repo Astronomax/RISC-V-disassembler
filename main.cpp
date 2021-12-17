@@ -2,14 +2,21 @@
 #include "rv32_print.h"
 #include "fsymtab_print.h"
 
+std::string find_mark(const std::vector<Parser::symbol> &symtab, uint32_t address) {
+    for (auto it = symtab.rbegin(); it != symtab.rend(); ++it)
+        if (it->symbol_value == address)
+            return it->symbol_name + ":";
+    return "";
+}
+
 int main(int argc, char* argv[]) {
     Parser parser(argv[1]);
     FILE* out = fopen(argv[2], "w");
 
-    auto sections = parser.get_sections();
-    auto text_section = parser.find_section(sections, ".text");
-    auto symtable_section = parser.find_section(sections, ".symtab");
-    auto symtab = parser.get_symbols();
+    std::vector<Parser::section> sections = parser.get_sections();
+    Parser::section text_section = parser.find_section(sections, ".text");
+    Parser::section symtable_section = parser.find_section(sections, ".symtab");
+    std::vector<Parser::symbol> symtab = parser.get_symbols();
 
     uint32_t address = ((Elf32_Ehdr *) (parser.memory_pointer))->e_entry;
     uint16_t* beg_itr = (uint16_t*)parser.memory_pointer + text_section.section_offset / 2;
@@ -17,15 +24,12 @@ int main(int argc, char* argv[]) {
 
     while (beg_itr != end_itr) {
         if ((*(beg_itr) & 3u) == 3u) {
-            fprintf(out, "%08x          ", address);
-            uint32_t row = *(beg_itr++) | (*(beg_itr++) << 16u);
-
-            for (auto &[instruction, _print] : rv32_print) {
-                if ((row & instruction.mask) == instruction.opcode) {
-                    _print(out, instruction, row);
-                    break;
-                }
-            }
+            uint32_t block = *(beg_itr++) | (*(beg_itr++) << 16u);
+            std::string mrk = find_mark(symtab, address);
+            fprintf(out, "%08x %10s ", address, mrk.c_str());
+            for (auto &[instr, instr_print] : rv32_print)
+                if ((block & instr.mask) == instr.opcode)
+                    instr_print(out, instr, block);
             fprintf(out, "\n");
             address += 4;
         } else {

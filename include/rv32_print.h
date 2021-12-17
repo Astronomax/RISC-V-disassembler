@@ -22,8 +22,7 @@ namespace rv32_printers {
         int32_t arg1 = (int32_t) extract_arg(word.args[1], bits);
         if (arg1 & 2048) arg1 -= 4096;
         uint32_t arg2 = extract_arg(word.args[2], bits);
-        fprintf(f, "%s %s, %d(%s)", word.word_name.c_str(), registers[arg0].c_str(), arg1,
-               registers[arg2].c_str());
+        fprintf(f, "%s %s, %d(%s)", word.word_name.c_str(), registers[arg0].c_str(), arg1, registers[arg2].c_str());
     };
 
     std::function<void(FILE*, const RV32_word &, uint32_t)> print_2 = [](FILE* f, const RV32_word &word, uint32_t bits) {
@@ -31,16 +30,14 @@ namespace rv32_printers {
         uint32_t arg1 = extract_arg(word.args[1], bits);
         int32_t arg2 = extract_arg(word.args[2], bits);
         if (arg2 & 2048) arg2 -= 4096;
-        fprintf(f, "%s %s, %s, %d", word.word_name.c_str(), registers[arg0].c_str(), registers[arg1].c_str(),
-               arg2);
+        fprintf(f, "%s %s, %s, %d", word.word_name.c_str(), registers[arg0].c_str(), registers[arg1].c_str(), arg2);
     };
 
     std::function<void(FILE*, const RV32_word &, uint32_t)> print_3 = [](FILE* f, const RV32_word &word, uint32_t bits) {
         uint32_t arg0 = extract_arg(word.args[0], bits);
         uint32_t arg1 = extract_arg(word.args[1], bits);
         uint32_t arg2 = extract_arg(word.args[2], bits);
-        fprintf(f, "%s %s, %s, %s", word.word_name.c_str(), registers[arg0].c_str(), registers[arg1].c_str(),
-               registers[arg2].c_str());
+        fprintf(f, "%s %s, %s, %s", word.word_name.c_str(), registers[arg0].c_str(), registers[arg1].c_str(), registers[arg2].c_str());
     };
 };
 
