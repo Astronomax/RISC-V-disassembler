@@ -7,7 +7,8 @@
 #include "elf_headers.h"
 
 struct Parser {
-    uint8_t *memory_pointer;
+    char *file_bytes;
+    char *memory_pointer;
 
     struct section {
         int section_index = 0;
@@ -33,7 +34,8 @@ struct Parser {
 
     section &find_section(std::vector<Parser::section> &sections, const std::string &name);
 
-    Parser(std::string path);
+    Parser(const std::string& path);
+    ~Parser();
 
     std::string get_symbol_visibility(uint8_t sym_vis);
 

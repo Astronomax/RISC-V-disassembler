@@ -1,12 +1,18 @@
 #include "elf_parser.h"
+#include <fstream>
 
-Parser::Parser(std::string path) {
-    int fd, i;
-    struct stat st;
-    fd = open(path.c_str(), O_RDONLY);
-    fstat(fd, &st);
-    memory_pointer = (uint8_t *) (mmap(NULL, st.st_size, PROT_READ, MAP_PRIVATE, fd, 0));
+Parser::Parser(const std::string& path) {
+    std::ifstream ifs(path, std::ios::binary|std::ios::ate);
+    std::ifstream::pos_type pos = ifs.tellg();
+    int length = pos;
+    char *pChars = new char[length];
+    ifs.seekg(0, std::ios::beg);
+    ifs.read(pChars, length);
+    ifs.close();
+    file_bytes = memory_pointer = pChars;
 }
+
+Parser::~Parser() { delete [] file_bytes; }
 
 std::vector<std::string> sections_types = {"SHT_NULL", "SHT_PROGBITS", "SHT_SYMTAB", "SHT_STRTAB", "SHT_RELA", "SHT_HASH", "SHT_DYNAMIC",
                                  "SHT_NOTE", "SHT_NOBITS", "SHT_REL", "SHT_DYNSYM"};

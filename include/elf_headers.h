@@ -1,15 +1,11 @@
 #ifndef CODE_ELF_HEADERS_H
 #define CODE_ELF_HEADERS_H
 
-#include <sys/mman.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-
-typedef __u32 Elf32_Addr;
-typedef __u16 Elf32_Half;
-typedef __u32 Elf32_Off;
-typedef __s32 Elf32_Sword;
-typedef __u32 Elf32_Word;
+typedef unsigned int Elf32_Addr;
+typedef unsigned short Elf32_Half;
+typedef unsigned int Elf32_Off;
+typedef __signed__ int Elf32_Sword;
+typedef unsigned int Elf32_Word;
 
 #define SHN_ABS        0xfff1
 #define SHN_COMMON     0xfff2
